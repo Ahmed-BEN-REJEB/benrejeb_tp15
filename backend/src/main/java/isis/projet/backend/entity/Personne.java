@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.*;
 
 @Entity
@@ -32,6 +34,7 @@ public class Personne {
     private String poste;
 
     @ToString.Exclude
+    @JsonManagedReference
     @OneToMany(mappedBy = "personne", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Participation> affectations = new ArrayList<>();
 
@@ -54,4 +57,5 @@ public class Personne {
         var participation = new Participation(role, pourcentage, affectation, this);
         affectations.add(participation);
     }
+
 }

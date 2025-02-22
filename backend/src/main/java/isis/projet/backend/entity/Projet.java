@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,6 +36,7 @@ public class Projet {
     private LocalDate fin;
 
     @ToString.Exclude
+    @JsonManagedReference
     @OneToMany(mappedBy = "projet", orphanRemoval = true)
     private List<Participation> contributeurs = new ArrayList<>();
 

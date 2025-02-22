@@ -1,14 +1,17 @@
 package isis.projet.backend.controller;
 
 import isis.projet.backend.service.ParticipationProjet;
+import isis.projet.backend.entity.Participation;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.modelmapper.ModelMapper;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/participations")
+@RequestMapping("/api/participations")
+@CrossOrigin("*") // Autorise les requêtes depuis le frontend
 public class ParticipationController {
 
     private final ParticipationProjet participationService;
@@ -20,33 +23,31 @@ public class ParticipationController {
     }
 
     /**
-     * Enregistre une participation d'une personne à un projet.
+     * Enregistre une participation en récupérant les identifiants de la personne et du projet
      *
-     * @param matricule   Identifiant de la personne
-     * @param codeProjet  Identifiant du projet
-     * @param role        Rôle de la personne dans le projet
-     * @param pourcentage Pourcentage de temps consacré au projet
-     * @return Réponse HTTP
+     * @param participationDTO DTO contenant les informations nécessaires
+     * @return Réponse HTTP contenant soit la participation enregistrée, soit un message d'erreur
      */
     @PostMapping
-    public ResponseEntity<?> enregistrerParticipation(
-            @RequestParam Integer matricule,
-            @RequestParam Integer codeProjet,
-            @RequestParam String role,
-            @RequestParam float pourcentage) {
+    public ResponseEntity<?> enregistrerParticipation(@RequestBody ParticipationDTO participationDTO) {
         try {
-            // On appelle le service métier
-            var participation = participationService.enregistrerParticipation(matricule, codeProjet, role, pourcentage);
-            // On renvoie la participation créée sous la forme d'un DTO
+            var participation = participationService.enregistrerParticipation(
+                    participationDTO.getIdPersonne(), // Utilisation de l'ID de la personne
+                    participationDTO.getIdProjet(), // Utilisation de l'ID du projet
+                    participationDTO.getRole(),
+                    participationDTO.getPourcentage()
+            );
             var body = mapper.map(participation, ParticipationDTO.class);
             return ResponseEntity.ok(body);
-            // En cas d'erreur, on renvoie des informations sur l'erreur pour le frontend
-        } catch (NoSuchElementException | IllegalStateException e) {
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(new ApiErrorDTO("La personne ou le projet n'existe pas."));
+        } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(new ApiErrorDTO(e.getMessage()));
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.badRequest().body(new ApiErrorDTO("Cette personne participe déjà au projet"));
+            return ResponseEntity.badRequest().body(new ApiErrorDTO("Cette personne participe déjà à ce projet."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiErrorDTO("Une erreur est survenue : " + e.getMessage()));
         }
     }
+
 }

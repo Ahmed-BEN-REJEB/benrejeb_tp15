@@ -1,18 +1,16 @@
 package isis.projet.backend.controller;
 
 import lombok.Data;
-
 import java.io.Serializable;
 
 /**
- * DTO for {@link isis.projet.backend.entity.Participation}
+ * DTO pour la gestion des participations
  */
 @Data
 public class ParticipationDTO implements Serializable {
-    Integer id;
-    String role;
-    Float pourcentage;
-    String projetNom;
-    String personneNom;
-    String personnePrenom;
+    private Integer id; // ID de la participation
+    private Integer idPersonne; // ID de la personne (matricule)
+    private Integer idProjet; // ID du projet (codeProjet)
+    private String role;
+    private Float pourcentage;
 }
