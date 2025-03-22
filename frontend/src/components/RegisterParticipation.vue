@@ -14,7 +14,7 @@
     <div class="form-group">
       <label>📁 Projet</label>
       <select v-model="currentProject">
-        <option v-for="project in projects" :key="project.codeProjet" :value="project.codeProjet">
+        <option v-for="project in projects" :key="project.id" :value="project.id">
           {{ project.nom }}
         </option>
       </select>
@@ -77,12 +77,12 @@ const registerParticipation = async () => {
   try {
     console.log(currentPerson.value, currentProject.value, role.value);
 
-    const response = await fetch("/api/participation", {
+    const response = await fetch("/api/participations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        matricule: currentPerson.value,
-        codeProjet: currentProject.value,
+        idPersonne: currentPerson.value,
+        idProjet: currentProject.value,
         role: role.value,
         pourcentage: pourcentage.value / 100,
       }),

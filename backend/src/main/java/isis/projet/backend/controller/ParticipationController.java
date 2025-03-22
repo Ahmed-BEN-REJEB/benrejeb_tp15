@@ -1,12 +1,10 @@
 package isis.projet.backend.controller;
 
 import isis.projet.backend.service.ParticipationProjet;
-import isis.projet.backend.entity.Participation;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.modelmapper.ModelMapper;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
